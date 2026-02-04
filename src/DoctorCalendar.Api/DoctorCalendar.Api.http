@@ -1,0 +1,6 @@
+@DoctorCalendar.Api_HostAddress = http://localhost:5258
+
+GET {{DoctorCalendar.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
