@@ -35,6 +35,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
 builder.Services.AddScoped<IConcurrencyTokenAccessor, EfConcurrencyTokenAccessor>();
+builder.Services.AddScoped<IEventReadRepository, EventReadRepository>();
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
 builder.Services.AddMediatR(cfg =>

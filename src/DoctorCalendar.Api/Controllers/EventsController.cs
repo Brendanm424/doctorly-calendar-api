@@ -1,6 +1,7 @@
 ﻿using DoctorCalendar.Application.Commands.CancelEvent;
 using DoctorCalendar.Application.Commands.CreateEvent;
 using DoctorCalendar.Application.Commands.UpdateEvent;
+using DoctorCalendar.Application.Queries.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,6 +54,29 @@ public sealed class EventsController : ControllerBase
     {
         await _mediator.Send(new CancelEventCommand(id, version), ct);
         return NoContent();
+    }
+
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetEventByIdQuery(id), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    public async Task<IActionResult> List(
+        [FromQuery] DateTime? fromUtc,
+        [FromQuery] DateTime? toUtc,
+        [FromQuery] string? status,
+        [FromQuery] string? q,
+        CancellationToken ct)
+    {
+        var results = await _mediator.Send(new ListEventsQuery(fromUtc, toUtc, status, q), ct);
+        return Ok(results);
     }
 
 }
