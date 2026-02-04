@@ -1,4 +1,5 @@
-﻿using DoctorCalendar.Application.Commands.CreateEvent;
+﻿using DoctorCalendar.Application.Commands.CancelEvent;
+using DoctorCalendar.Application.Commands.CreateEvent;
 using DoctorCalendar.Application.Commands.UpdateEvent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,18 @@ public sealed class EventsController : ControllerBase
             return BadRequest("Route id does not match payload id.");
 
         await _mediator.Send(command, ct);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Cancel(
+    [FromRoute] Guid id,
+    [FromQuery] int version,
+    CancellationToken ct)
+    {
+        await _mediator.Send(new CancelEventCommand(id, version), ct);
         return NoContent();
     }
 
