@@ -1,6 +1,9 @@
+using DoctorCalendar.Application.Commands.CreateEvent;
 using DoctorCalendar.Application.Interfaces;
 using DoctorCalendar.Infrastructure.Persistence;
 using DoctorCalendar.Infrastructure.Repositories;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +19,12 @@ builder.Services.AddDbContext<DoctorCalendarDbContext>(options =>
 
 builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CreateEventCommand).Assembly));
+
+builder.Services.AddValidatorsFromAssembly(typeof(CreateEventCommandValidator).Assembly);
+builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 
