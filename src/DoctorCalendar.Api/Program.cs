@@ -1,4 +1,6 @@
+using DoctorCalendar.Application.Interfaces;
 using DoctorCalendar.Infrastructure.Persistence;
+using DoctorCalendar.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,9 @@ builder.Services.AddDbContext<DoctorCalendarDbContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DoctorCalendar"));
 });
+
+builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
 var app = builder.Build();
 
