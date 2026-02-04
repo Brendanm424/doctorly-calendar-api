@@ -1,4 +1,5 @@
 ﻿using DoctorCalendar.Application.Commands.CreateEvent;
+using DoctorCalendar.Application.Commands.UpdateEvent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,23 @@ public sealed class EventsController : ControllerBase
     {
         var id = await _mediator.Send(command, ct);
 
-        // We'll add GET /events/{id} in Task 3.4, but Location is still good practice
         return Created($"/events/{id}", new { id });
     }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Update(
+    Guid id,
+    [FromBody] UpdateEventCommand command,
+    CancellationToken ct)
+    {
+        if (id != command.Id)
+            return BadRequest("Route id does not match payload id.");
+
+        await _mediator.Send(command, ct);
+        return NoContent();
+    }
+
 }

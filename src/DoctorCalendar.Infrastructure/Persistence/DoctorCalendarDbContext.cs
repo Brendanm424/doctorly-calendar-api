@@ -15,4 +15,28 @@ public sealed class DoctorCalendarDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DoctorCalendarDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }
+
+    public DoctorCalendarDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<DoctorCalendarDbContext>();
+
+        // Keep consistent with appsettings.json
+        optionsBuilder.UseSqlite("Data Source=doctorcalendar.db");
+
+        return new DoctorCalendarDbContext(optionsBuilder.Options);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<CalendarEvent>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                var current = entry.Property<int>("Version").CurrentValue;
+                entry.Property<int>("Version").CurrentValue = current + 1;
+            }
+        }
+
+        return base.SaveChangesAsync(ct);
+    }
 }

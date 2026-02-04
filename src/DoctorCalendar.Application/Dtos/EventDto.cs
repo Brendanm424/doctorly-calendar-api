@@ -8,5 +8,5 @@ public sealed record EventDto(
     DateTime EndUtc,
     string Status,
     IReadOnlyList<AttendeeDto> Attendees,
-    string? RowVersion // base64 (shadow property via EF, populated in queries)
+    int Version 
 );

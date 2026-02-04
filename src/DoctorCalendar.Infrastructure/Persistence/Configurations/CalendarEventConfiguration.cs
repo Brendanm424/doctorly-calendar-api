@@ -46,10 +46,10 @@ public sealed class CalendarEventConfiguration : IEntityTypeConfiguration<Calend
             .HasForeignKey("EventId")
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Shadow property for optimistic concurrency (keeps Domain clean)
-        builder.Property<byte[]>("RowVersion")
-            .IsRowVersion()
-            .IsConcurrencyToken();
+        // SQLlite...not supporting RowVersion.
+        builder.Property<int>("Version")
+            .IsConcurrencyToken()
+            .HasDefaultValue(1);
 
         // DomainEvents are not persisted
         builder.Ignore(x => x.DomainEvents);
